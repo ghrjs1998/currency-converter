@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>환율계산기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!--드롭다운 리스트 만들고, 각나라 통화 넣기-->
+    <!--드롭다운 컨텐츠에 클릭이벤트 넣기-->
+    <div class="exchange-box">
+        <div class="dropdown">
+            <button class="dropbtn" id="from-button">USD</button>
+            <div class="dropdown-content" id="from-currency-list">
+                <a href="#">KRW</a>
+                <a href="#">USD</a>
+                <a href="#">JPY</a>
+                <a href="#">THB</a>
+                <a href="#">CNY</a>
+                <a href="#">VND</a>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="number" id="from-input" onkeyup="convert()" />
+            <div>원</div>
+        </div>
+    </div>
+    <h1>=</h1>
+    <div class="exchange-box">
+        <div class="dropdown">
+            <button class="dropbtn" id="to-button">KRW</button>
+            <div class="dropdown-content" id="to-currency-list">
+                <a href="#">KRW</a>
+                <a href="#">USD</a>
+                <a href="#">JPY</a>
+                <a href="#">THB</a>
+                <a href="#">CNY</a>
+                <a href="#">VND</a>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="number" id="to-input" />
+            <div>원</div>
+        </div>
+    </div>
+
+
+    <script src="main.js"></script>
+</body>
+</html>
