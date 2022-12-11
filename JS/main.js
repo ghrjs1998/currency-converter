@@ -16,6 +16,7 @@ let currencyRatio = {
     JPY: 0.1,
     THB: 0.026,
     unit: "원",
+    img: "/JS/flags/south-korea.png",
   },
   USD: {
     KRW: 1318.97,
@@ -25,6 +26,7 @@ let currencyRatio = {
     JPY: 136.84,
     THB: 34.77,
     unit: "달러",
+    img: "/JS/flags/united-states.png",
   },
   VND: {
     KRW: 0.055,
@@ -34,6 +36,7 @@ let currencyRatio = {
     JPY: 0.0057,
     THB: 0.0015,
     unit: "동",
+    img: "/JS/flags/vietnam.png",
   },
   CNY: {
     KRW: 189.29,
@@ -43,6 +46,7 @@ let currencyRatio = {
     JPY: 19.63,
     THB: 4.99,
     unit: "위안",
+    img: "/JS/flags/china.png",
   },
   JPY: {
     KRW: 9.64,
@@ -52,6 +56,7 @@ let currencyRatio = {
     JPY: 1,
     THB: 0.25,
     unit: "엔",
+    img: "/JS/flags/japan.png",
   },
   THB: {
     KRW: 37.96,
@@ -61,45 +66,76 @@ let currencyRatio = {
     JPY: 3.94,
     THB: 1,
     unit: "바트",
+    img: "/JS/flags/thailand.png",
   },
 };
-let unitWords = ["", "만", "억", "조", "경"];
+let unitWords = ["", "만", "억", "조", "경", "해"];
 let splitUnit = 10000;
+let toButton = document.getElementById("to-button");
+let fromButton = document.getElementById("from-button");
 let fromCurrency = "USD";
 let toCurrency = "USD";
 
 // from 버튼에 클릭이벤트 걸어주기
-document.querySelectorAll("#from-currency-list a").forEach((menu) =>
-  menu.addEventListener("click", function () {
-    // 1. 버튼 가져오기
-    // 2. 버튼의 값 바꾸기
-    document.getElementById("from-button").textContent = this.textContent;
-    // 3. 선택된 currency값을 변수에 저장하기
-    fromCurrency = this.textContent;
-    convert();
+document.querySelectorAll("#from-currency-list li").forEach((item) =>
+  item.addEventListener("click", function () {
+    fromCurrency = this.id;
+    fromButton.innerHTML = `<img class="flag-img"src="${currencyRatio[fromCurrency].img}"/>${fromCurrency}`;
+    convert("from");
   })
 );
 
 // to 버튼에 클릭이벤트 걸어주기
-document.querySelectorAll("#to-currency-list a").forEach((menu) =>
-  menu.addEventListener("click", function () {
-    // 1. 버튼 가져오기
-    // 2. 버튼의 값 바꾸기
-    document.getElementById("to-button").textContent = this.textContent;
-    // 3. 선택된 currency값을 변수에 저장하기
-    toCurrency = this.textContent;
-    convert();
+document.querySelectorAll("#to-currency-list li").forEach((item) =>
+  item.addEventListener("click", function () {
+    toCurrency = this.id;
+    toButton.innerHTML = `<img class="flag-img"src="${currencyRatio[toCurrency].img}"/>${toCurrency}`;
+    convert("from");
   })
 );
 
 // 1. 키를 입력하는 순간 환전이 되서 환전된 값이 보인다.
-function convert() {
-  // 1. 환전 => 얼마를 환전? 가지고 있는 돈이 뭔지, 바꾸고자하는 돈이 뭔지
-  // 2. 돈 * 환율 = 환전 금액
-  let amount = document.getElementById("from-input").value;
-  let convertedAmount = amount * currencyRatio[fromCurrency][toCurrency];
-
-  document.getElementById("to-input").value = convertedAmount;
+function convert(type) {
+  let mount = 0;
+  if (type === "from") {
+    // 입력값 받기
+    amount = document.getElementById("fromAmount").value;
+    // 환전하기
+    let convertAmount = amount * currencyRatio[fromCurrency][toCurrency];
+    // 환전한값 보여주기
+    document.getElementById("toAmount").value = convertAmount;
+    // 환전한값 한국어로
+    renderKoreanNumber(amount, convertAmount);
+  } else {
+    amount = document.getElementById("toAmount").value;
+    let convertedAmount = amount * currencyRatio[toCurrency][fromCurrency];
+    document.getElementById("fromAmount").value = convertedAmount;
+    renderKoreanNumber(convertedAmount, amount);
+  }
 }
 
-// 1. 드랍다운 리스트에 값이 바뀔때 마다 => 환전을 다시한다.
+function renderKoreanNumber(from, to) {
+  document.getElementById("fromNumToKorea").textContent =
+    readNum(from) + currencyRatio[fromCurrency].unit;
+  document.getElementById("toNumToKorea").textContent =
+    readNum(to) + currencyRatio[toCurrency].unit;
+}
+
+function readNum(num) {
+  let resultString = "";
+  let resultArray = [];
+  for (let i = 0; i < unitWords.length; i++) {
+    let unitResult =
+      (num % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+    unitResult = Math.floor(unitResult);
+
+    if (unitResult > 0) {
+      resultArray[i] = unitResult;
+    }
+  }
+  for (let i = 0; i < resultArray.length; i++) {
+    if (!resultArray[i]) continue;
+    resultString = String(resultArray[i]) + unitWords[i] + resultString;
+  }
+  return resultString;
+}
